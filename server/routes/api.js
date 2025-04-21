@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import bodyParser from 'body-parser';
 
 import { getDaylightTimeString } from '../services/common.js';
+import { getWebCamImage } from '../services/webcam.js';
 import { triggerServo } from '../services/servo.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -16,6 +17,19 @@ export function apiRoutes(app) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
+
+    app.route('/api/webcam').get((req, res) => {
+        try {
+            getWebCamImage((image) => {
+                res.send(image);
+            });
+            return;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return;
+    });
 
     app.route('/api/servo').get(async (req, res) => {
         try {

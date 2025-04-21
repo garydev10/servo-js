@@ -13,3 +13,12 @@ sudo apt install -y nodejs npm
 ```shell
 sudo apt install pigpio
 ```
+## Webcam Capture
+* Trust Spotlight Pro Webcam with Microphone, LED Lights and Smart Stand, Videocamera, USB Plug and Play
+* webcam capture using node-webcam with fswebcam,v4l-utils
+* image serving using serve-index
+```shell
+sudo apt install fswebcam v4l-utils
+# test capture
+fswebcam -r 640x480 -S 10 -F 10 image.jpg
+```

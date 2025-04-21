@@ -1,5 +1,6 @@
 'use strict';
 import express from 'express';
+import serveIndex from 'serve-index';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +14,9 @@ app.route('/').get(function (req, res) {
 })
 
 app.use('/public', express.static(__dirname + '/public'));
+
+// enable image web listing
+app.use('/public/images', serveIndex(__dirname + '/public/images'));
 
 //Routing for API 
 apiRoutes(app);
