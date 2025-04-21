@@ -1,0 +1,17 @@
+{
+  "name": "schedule",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js 1",
+    "dev0": "node server.js 0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gary L",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}

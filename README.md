@@ -10,6 +10,7 @@ sudo apt install -y nodejs npm
 * Continuous Rotation Servo DS04-NFC
 * Rotate CCW 100 ms and then CW 200 ms to press the button and retract
 * Servo control using Raspberry Pi PIN 22 by pigpio
+* Schedule job check every 30 mins to determine if need press boiler and capture result image
 ```shell
 sudo apt install pigpio
 ```
