@@ -152,9 +152,23 @@ async function loadSchedules() {
     }
 }
 
+
+async function updateServerTime() {
+    const res = await fetch('/api/time');
+    const data = await res.json();
+    let serverTimeHtml = '';
+    if (data.serverTime) {
+        const serverTime = data.serverTime.replace('T', ', ').replace('Z', '');
+        serverTimeHtml = `<h5>Server Time: ${serverTime}</h5>`;
+    }
+    const serverTimeElement = document.getElementById('serverTime');
+    serverTimeElement.innerHTML = `${serverTimeHtml}`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     // main action after document load
     addEventWebCam();
     addEventBoiler();
     await loadSchedules();
+    await updateServerTime();
 });

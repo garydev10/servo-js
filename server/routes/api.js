@@ -25,6 +25,17 @@ export function apiRoutes(app) {
     const isMissing = (field) => field === undefined || field === '';
     
 
+    app.route('/api/time').get((req, res) => {
+        try {
+            const serverTime = getDaylightTimeString();
+            res.json({ serverTime: serverTime });
+        } catch (error) {
+            console.error(error);
+        }
+
+        return;
+    });
+
     app.route('/api/schedules')
         .get((req, res) => {
             try {
