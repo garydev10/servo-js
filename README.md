@@ -1,2 +1,8 @@
 # servo-js
 A full-stack website and scheduler to press the boiler button, capture webcam images, and show the fee table, running on a Raspberry Pi 3B.
+
+## Web Server
+* Raspberry Pi 3 Model B, Debian minimal image
+## Boiler Button Press
+* Continuous Rotation Servo DS04-NFC
+* Rotate CCW 100 ms and then CW 200 ms to press the button and retract
