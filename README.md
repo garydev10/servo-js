@@ -3,6 +3,13 @@ A full-stack website and scheduler to press the boiler button, capture webcam im
 
 ## Web Server
 * Raspberry Pi 3 Model B, Debian minimal image
+```shell
+sudo apt install -y nodejs npm
+```
 ## Boiler Button Press
 * Continuous Rotation Servo DS04-NFC
 * Rotate CCW 100 ms and then CW 200 ms to press the button and retract
+* Servo control using Raspberry Pi PIN 22 by pigpio
+```shell
+sudo apt install pigpio
+```
