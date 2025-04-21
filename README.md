@@ -1,2 +1,2 @@
 # servo-js
-A fullstack website and scheduler to press boiler button and show fee table, running on Raspberry Pi 3B.
+A full-stack website and scheduler to press the boiler button, capture webcam images, and show the fee table, running on a Raspberry Pi 3B.
