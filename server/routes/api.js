@@ -16,7 +16,7 @@ export function apiRoutes(app) {
     // Use body-parser to Parse POST Requests
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-
+    
     const schedulesOptionsFilePath = path.resolve(__dirname, '../data', 'schedulesOptions.txt');
     const getSchedulesOptions = () => fs.readFileSync(schedulesOptionsFilePath, 'utf-8').toString().split('\n').map(l => l.trim());
     const schedulesFilePath = path.resolve(__dirname, '../data', 'schedules.txt');
@@ -89,6 +89,49 @@ export function apiRoutes(app) {
 
         return;
     });
+
+    const scheduleRatesFilePath = path.resolve(__dirname, '../data', 'scheduleRates.json');
+    const getScheduleTable = () => {
+        const jsonString = fs.readFileSync(scheduleRatesFilePath, 'utf-8');
+        const scheduleTable = JSON.parse(jsonString);
+        return scheduleTable;
+    };
+    const updateScheduleTable = (date, scheduleRates) => {
+        const jsonString = JSON.stringify({ date, scheduleRates });
+        fs.writeFileSync(scheduleRatesFilePath, jsonString);
+    };
+    app.route('/api/schedule-rates')
+        .get((req, res) => {
+            try {
+                const jsonString = fs.readFileSync(scheduleRatesFilePath, 'utf-8');
+                if (isMissing(jsonString)) {
+                    res.json({ message: 'schedule rates format error' });
+                    return;
+                }
+                const scheduleTable = getScheduleTable();
+                res.json(scheduleTable);
+            } catch (error) {
+                console.error(error);
+            }
+
+            return;
+        })
+        .post((req, res) => {
+            try {
+                // console.log(req.body);
+                const { date, scheduleRates } = req.body;
+                if (isMissing(date) || isMissing(scheduleRates)) {
+                    res.json({ message: 'schedule rates format error' });
+                    return;
+                }
+                updateScheduleTable(date, scheduleRates);
+                res.json({ date, scheduleRates });
+            } catch (error) {
+                console.error(error);
+            }
+
+            return;
+        });
 
     app.route('/api/webcam').get((req, res) => {
         try {

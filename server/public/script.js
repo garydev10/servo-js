@@ -152,6 +152,96 @@ async function loadSchedules() {
     }
 }
 
+function sortTable(columnIndex, tableId) {
+    let table = document.getElementById(tableId);
+    let rows = Array.prototype.slice.call(table.querySelectorAll('tbody > tr'));
+    
+    const ths = table.querySelectorAll('thead > tr > th');
+    let reverseFactor = 1; // asc = 1, dsc = -1
+    if (ths[columnIndex].classList.contains('dsc')) {
+        reverseFactor = -1;
+    }
+    ths[columnIndex].classList.toggle('dsc');
+    
+    rows.sort(function (rowA, rowB) {
+        let cellA = rowA.cells[columnIndex].textContent;
+        let cellB = rowB.cells[columnIndex].textContent;
+
+        // Handle numerical values
+        if (!isNaN(cellA) && !isNaN(cellB)) {
+            return reverseFactor * (cellA - cellB);
+        }
+
+        // Default to string comparison
+        return reverseFactor * cellA.localeCompare(cellB);
+    });
+
+    rows.forEach(function (row) {
+        table.querySelector('tbody').appendChild(row);
+    });
+}
+
+function json2Table(json) {
+    const tableId = 'feeTable';
+    let cols = Object.keys(json[0]);
+    //Map over columns, make headers,join into string
+    let headerRow = cols
+        .map((col, index) => `
+            <th scope="col">
+                <a class="text-dark" sort-dir="asc" onclick="sortTable(${index},'${tableId}')">${col}</a>
+            </th>
+        `)
+        .join('');
+    //map over array of json objs, for each row(obj) map over column values,
+    //and return a td with the value of that object for its column
+    //take that array of tds and join them
+    //then return a row of the tds
+    //finally join all the rows together
+    let rows = json
+        .map((row) => {
+            let tds = cols.map((col) => `<td>${row[col]}</td>`).join('');
+            return `<tr>${tds}</tr>`;
+        })
+        .join('');
+
+    //build the table
+    const table = `
+          <table class='table table-striped' id='${tableId}'>
+              <thead>
+                  <tr class='table-info'>${headerRow}</tr>
+              <thead>
+              <tbody>
+                  ${rows}
+              <tbody>
+          <table>`;
+
+    return table;
+}
+
+async function updateScheduleTable() {
+    try {
+        const res = await fetch('/api/schedule-rates');
+        if (!res.ok) {
+            throw new Error(`Response status: ${res.status}`);
+        }
+        const data = await res.json();
+        let dateRatesHtml = '';
+        if (data.date) {
+            const date = data.date;
+            dateRatesHtml = `<h5>Schedule Rates: ${date}</h5>`;
+        }
+        if (data.scheduleRates) {
+            const scheduleRates = data.scheduleRates;
+            const scheduleRatesHtml = json2Table(scheduleRates);
+            dateRatesHtml = `${dateRatesHtml}${scheduleRatesHtml}`;
+        }
+        const scheduleRatesTable = document.getElementById('scheduleRates');
+        scheduleRatesTable.innerHTML = `${dateRatesHtml}`;
+
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
 async function updateServerTime() {
     const res = await fetch('/api/time');
@@ -170,5 +260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     addEventWebCam();
     addEventBoiler();
     await loadSchedules();
+    await updateScheduleTable();
     await updateServerTime();
 });

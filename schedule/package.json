@@ -12,6 +12,7 @@
   "author": "Gary L",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "puppeteer-core": "^23.4.1"
   }
 }
