@@ -1,5 +1,5 @@
 'use strict';
-import {Gpio} from 'pigpio';
+import { Gpio } from 'pigpio';
 
 const triggerServo = async () => {
 
@@ -21,7 +21,7 @@ const triggerServo = async () => {
     servo.servoWrite(pulseWidth);
 
     // 360 deg rc servo CW rotation
-    await new Promise(r => setTimeout(r, SERVO_DELAY + 100));
+    await new Promise(r => setTimeout(r, SERVO_DELAY + SERVO_DELAY));
     pulseWidth = SERVO_MIN;
     servo.servoWrite(pulseWidth);
 

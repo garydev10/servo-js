@@ -1,16 +1,15 @@
 
-import path from 'node:path';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import dotenv from 'dotenv';
+import { config } from 'dotenv';
 
 import { getDaylightTimeString } from './services/common.js';
 import { getScheduleRates } from './services/webpage.js';
 import { processScheduleRates } from './services/scheduleRate.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dotEnvPath = path.resolve(__dirname, './', '.env');
-dotenv.config({ path: dotEnvPath });
+const dotEnvPath = resolve(__dirname, './', '.env');
+config({ path: dotEnvPath });
 
 let url = 'http://localhost:5000';
 

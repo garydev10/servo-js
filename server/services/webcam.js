@@ -1,8 +1,7 @@
 'use strict';
-import * as fs from 'node:fs';
-import path from 'node:path';
+import { writeFile } from 'node:fs';
 import NodeWebcam from 'node-webcam';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { getDaylightTimeString } from './common.js';
@@ -26,10 +25,10 @@ const getWebCamImage = (callback) => {
         const ds = getDaylightTimeString().replace('Z', '').replace(/[^0-9]/g, '-');
 
         const name = `test_image-${ds}.${opts.output}`;
-        const fullPath = path.resolve(__dirname, '../public/images', name);
+        const fullPath = resolve(__dirname, '../public/images', name);
 
         const base64Data = data.replace(/^data:image\/jpeg;base64,/, '');
-        fs.writeFile(fullPath, base64Data, 'base64', function (err) {
+        writeFile(fullPath, base64Data, 'base64', function (err) {
             if (err) {
                 throw err;
             }

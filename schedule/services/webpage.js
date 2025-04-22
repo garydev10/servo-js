@@ -1,16 +1,15 @@
 'use strict';
-import path from 'node:path';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import puppeteer from 'puppeteer-core';
-import dotenv from 'dotenv';
+import { launch } from 'puppeteer-core';
+import { config } from 'dotenv';
 
 import { getDaylightTimeString } from './common.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const dotEnvPath = path.resolve(__dirname, '../', '.env');
-dotenv.config({ path: dotEnvPath });
+const dotEnvPath = resolve(__dirname, '../', '.env');
+config({ path: dotEnvPath });
 
 const submitLogin = async (page, username, password) => {
     console.log(`${getDaylightTimeString()} submitLogin start`);
@@ -79,14 +78,14 @@ const getBrowser = async () => {
     const isWin = process.platform === 'win32';
     if (isWin) {
 
-        browser = await puppeteer.launch({
+        browser = await launch({
             executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: false,
         });
 
     } else {
 
-        browser = await puppeteer.launch({
+        browser = await launch({
             executablePath: '/usr/bin/chromium-browser',
             // executablePath: '/usr/bin/chromium',
             // executablePath: '/home/testadmin/.cache/puppeteer/chrome-headless-shell/linux-128.0.6613.119/chrome-headless-shell-linux64/chrome-headless-shell',
