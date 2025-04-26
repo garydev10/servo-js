@@ -20,11 +20,11 @@ const getWebCamImage = (callback) => {
         callbackReturn: 'base64'
     };
 
-    NodeWebcam.capture('test_picture', opts, function (err, data) {
+    NodeWebcam.capture('temp-image', opts, function (err, data) {
 
-        const ds = getDaylightTimeString().replace('Z', '').replace(/[^0-9]/g, '-');
+        const ds = getDaylightTimeString().replace('Z', '').replace(/[^0-9]/g, '-').substring(2, 19);
 
-        const name = `test_image-${ds}.${opts.output}`;
+        const name = `boiler-${ds}.${opts.output}`;
         const fullPath = resolve(__dirname, '../public/images', name);
 
         const base64Data = data.replace(/^data:image\/jpeg;base64,/, '');
