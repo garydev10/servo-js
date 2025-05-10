@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { apiRoutes } from "./routes/api.js";
 import { getSchedulesOptions, getSchedulesHHMM } from "./services/schedules.js";
+import { getDaylightTimeString } from "./services/common.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -25,11 +26,12 @@ let uiItems = schedules.map((schedule, i) => {
   const jsonResultId = `schedule${di}JsonResult`;
   return { di, formId, dropdownId, jsonResultId };
 });
+const serverTime = getDaylightTimeString().replace("T", ", ").replace("Z", "");
 
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.get("/", function (req, res) {
-  res.render("index", { schedulesOptions, schedules, uiItems });
+  res.render("index", { schedulesOptions, schedules, uiItems, serverTime });
 });
 
 // enable image web listing
