@@ -5,6 +5,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { apiRoutes } from "./routes/api.js";
+import { getSchedulesOptions, getSchedulesHHMM } from "./services/schedules.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -15,10 +16,20 @@ apiRoutes(app);
 
 app.use("/public", express.static(__dirname + "/public"));
 
+const schedulesOptions = getSchedulesOptions();
+const schedules = getSchedulesHHMM();
+let uiItems = schedules.map((schedule, i) => {
+  const di = i; // display id
+  const formId = `schedule${di}Form`;
+  const dropdownId = `schedule${di}`;
+  const jsonResultId = `schedule${di}JsonResult`;
+  return { di, formId, dropdownId, jsonResultId };
+});
+
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.get("/", function (req, res) {
-  res.render("index");
+  res.render("index", { schedulesOptions, schedules, uiItems });
 });
 
 // enable image web listing

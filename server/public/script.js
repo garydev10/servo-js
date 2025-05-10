@@ -87,7 +87,6 @@ function addEventSchedules(i, formId, dropdownId, jsonResultId) {
 }
 
 async function loadSchedules() {
-  let dropdownIds = [];
   try {
     let res = await fetch("/api/schedules");
     let data = await res.json();
@@ -108,47 +107,6 @@ async function loadSchedules() {
       const dropdownId = `schedule${di}`;
       const jsonResultId = `schedule${di}JsonResult`;
       return { di, formId, dropdownId, jsonResultId };
-    });
-
-    // init form
-    const formsHtml = schedules
-      .map((schedule, i) => {
-        const { di, formId, dropdownId, jsonResultId } = uiItems[i];
-        const formHtml = `
-                <form id="${formId}" class="row">
-                    <label for="${dropdownId}" class="form-label">Schedule ${di} Boiler switch at: </label>
-                    <div class="col-sm-4">
-                        <select name="${dropdownId}" id="${dropdownId}" class="form-select">
-                            ${schedulesOptions
-                              .map(
-                                (opt) => `
-                                <option value="${opt}" ${
-                                  opt === schedule ? "selected" : ""
-                                }>
-                                    ${opt}
-                                </option>
-                            `
-                              )
-                              .join("\n")}
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <button type="submit" class="btn btn-primary">Schedule Set!</button>
-                    </div>
-                    <code id="${jsonResultId}"></code>
-                </form>
-                <hr />
-            `;
-        return formHtml;
-      })
-      .join("\n");
-    const schedulesForms = document.getElementById("schedulesForms");
-    schedulesForms.innerHTML = formsHtml;
-
-    schedules.forEach((schedule, i) => {
-      const { dropdownId } = uiItems[i];
-      const dropdown = document.getElementById(dropdownId);
-      dropdown.selectedIndex = schedulesOptions.indexOf(schedule);
     });
 
     uiItems.forEach((uiItem, i) => {

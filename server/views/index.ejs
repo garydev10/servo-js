@@ -23,7 +23,31 @@
       <hr />
       <div class="mb-3">
         <div id="testui">
-          <div id="schedulesForms"></div>
+          
+          <div id="schedulesForms">
+            <% schedules.forEach((schedule, i) => { %> 
+              <% const { di, formId, dropdownId, jsonResultId } = uiItems[i]; %>
+            <form id="<%= formId %>" class="row">
+              <label for="<%= dropdownId %>" class="form-label">Schedule <%= di %> Boiler switch at: </label>
+              <div class="col-sm-4">
+                <select name="<%= dropdownId %>" id="<%= dropdownId %>" class="form-select">
+                  <% schedulesOptions.forEach((opt) => { %> 
+                    <option value="<%= opt %>" <%= (opt === schedule)? "selected" : "" %>>
+                      <%= opt %>
+                    </option> 
+                  <% }); %>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <button type="submit" class="btn btn-primary">
+                  Schedule Set!
+                </button>
+              </div>
+              <code id="<%= jsonResultId %>"></code>
+            </form>
+            <hr />
+            <% }); %>
+          </div>
 
           <form id="boilerForm" class="row">
             <div class="col-sm-4">
