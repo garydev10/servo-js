@@ -10,19 +10,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
-app.set('views', __dirname + "/views");
+//Routing for API
+apiRoutes(app);
+
+app.use("/public", express.static(__dirname + "/public"));
+
+app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.get("/", function (req, res) {
   res.render("index");
 });
 
-app.use("/public", express.static(__dirname + "/public"));
-
 // enable image web listing
 app.use("/public/images", serveIndex(__dirname + "/public/images"));
-
-//Routing for API
-apiRoutes(app);
 
 //404 Not Found Middleware
 app.use(function (req, res, next) {
