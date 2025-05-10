@@ -1,160 +1,155 @@
-'use strict';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { launch } from 'puppeteer-core';
-import { config } from 'dotenv';
+"use strict";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { launch } from "puppeteer-core";
+import { config } from "dotenv";
 
-import { getDaylightTimeString } from './common.js';
+import { getDaylightTimeString } from "./common.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const dotEnvPath = resolve(__dirname, '../', '.env');
+const dotEnvPath = resolve(__dirname, "../", ".env");
 config({ path: dotEnvPath });
 
 const submitLogin = async (page, username, password) => {
-    console.log(`${getDaylightTimeString()} submitLogin start`);
-    // wait for the login form
-    const submit = '#loginForm > div.form-group > button';
-    await page.waitForSelector(submit, { timeout: 300_000 });
+  console.log(`${getDaylightTimeString()} submitLogin start`);
+  // wait for the login form
+  const submit = "#loginForm > div.form-group > button";
+  await page.waitForSelector(submit, { timeout: 300_000 });
 
-    // fill in the login credentials
-    await page.$eval('#id_username', (el, value) => el.value = value, username);
-    await page.$eval('#id_password', (el, value) => el.value = value, password);
+  // fill in the login credentials
+  await page.$eval("#id_username", (el, value) => (el.value = value), username);
+  await page.$eval("#id_password", (el, value) => (el.value = value), password);
 
-    // click the login button and wait for navigation
-    await page.click(submit);
+  // click the login button and wait for navigation
+  await page.click(submit);
 };
 
 const getRateTable = async (page, useTomorrowRate) => {
-    console.log(`${getDaylightTimeString()} getRateTable start`);
+  console.log(`${getDaylightTimeString()} getRateTable start`);
 
-    // wait for an element on the login redirected page
-    // let dayRateSelector = "button ::-p-text(Today)"; // use today rate
-    // if (useTomorrowRate) {
-    //     dayRateSelector = "button ::-p-text(Tomorrow)"; // use tomorrow rate
-    // }
-    let dayRateSelector = "::-p-xpath(//button[text()='Today'])"; // use today rate
-    if (useTomorrowRate) {
-        dayRateSelector = "::-p-xpath(//button[text()='Tomorrow'])"; // use tomorrow rate
-    }
-    await page.waitForSelector(dayRateSelector, { timeout: 300_000 });
-    await page.click(dayRateSelector);
+  // wait for an element on the login redirected page
+  // let dayRateSelector = "button ::-p-text(Today)"; // use today rate
+  // if (useTomorrowRate) {
+  //     dayRateSelector = "button ::-p-text(Tomorrow)"; // use tomorrow rate
+  // }
+  let dayRateSelector = "::-p-xpath(//button[text()='Today'])"; // use today rate
+  if (useTomorrowRate) {
+    dayRateSelector = "::-p-xpath(//button[text()='Tomorrow'])"; // use tomorrow rate
+  }
+  await page.waitForSelector(dayRateSelector, { timeout: 300_000 });
+  await page.click(dayRateSelector);
 
+  const halfHourRateSelector = "button ::-p-text(half hourly rates)";
+  // const halfHourRateSelector = "::-p-xpath(//button[span[span[text()='half hourly rates']]])";
+  await page.waitForSelector(halfHourRateSelector, { timeout: 300_000 });
+  await page.click(halfHourRateSelector);
 
-    const halfHourRateSelector = "button ::-p-text(half hourly rates)";
-    // const halfHourRateSelector = "::-p-xpath(//button[span[span[text()='half hourly rates']]])";
-    await page.waitForSelector(halfHourRateSelector, { timeout: 300_000 });
-    await page.click(halfHourRateSelector);
-
-    const priceRowsSelector = "tbody > tr";
-    const priceRowsStrings = await page.$$eval(priceRowsSelector, rows => {
-        // get array from table td
-        return Array.from(rows, row => {
-            const columns = row.querySelectorAll('td');
-            return Array.from(columns, column => column.innerText);
-        });
+  const priceRowsSelector = "tbody > tr";
+  const priceRowsStrings = await page.$$eval(priceRowsSelector, (rows) => {
+    // get array from table td
+    return Array.from(rows, (row) => {
+      const columns = row.querySelectorAll("td");
+      return Array.from(columns, (column) => column.innerText);
     });
-    return priceRowsStrings;
+  });
+  return priceRowsStrings;
 };
 
 const submitLogout = async (page) => {
-    console.log(`${getDaylightTimeString()} submitLogout start`);
+  console.log(`${getDaylightTimeString()} submitLogout start`);
 
-    // click logout
+  // click logout
 
-    const logout = "span ::-p-text(Log out)";
-    await page.waitForSelector(logout, { timeout: 300_000 });
-    await page.click(logout);
+  const logout = "span ::-p-text(Log out)";
+  await page.waitForSelector(logout, { timeout: 300_000 });
+  await page.click(logout);
 
-    // wait till button load
-    const buttonSelector = "button";
-    return await page.waitForSelector(buttonSelector, { timeout: 300_000 });
+  // wait till button load
+  const buttonSelector = "button";
+  return await page.waitForSelector(buttonSelector, { timeout: 300_000 });
 };
 
 const getBrowser = async () => {
-    console.log(`${getDaylightTimeString()} getBrowser start`);
+  console.log(`${getDaylightTimeString()} getBrowser start`);
 
-    let browser = undefined;
-    const isWin = process.platform === 'win32';
-    if (isWin) {
+  let browser = undefined;
+  const isWin = process.platform === "win32";
+  if (isWin) {
+    browser = await launch({
+      executablePath:
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      headless: false,
+    });
+  } else {
+    browser = await launch({
+      executablePath: "/usr/bin/chromium-browser",
+      // executablePath: '/usr/bin/chromium',
+      // executablePath: '/home/testadmin/.cache/puppeteer/chrome-headless-shell/linux-128.0.6613.119/chrome-headless-shell-linux64/chrome-headless-shell',
+      args: [
+        // '--headless=old',
+        "--headless",
+        "--no-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--disable-infobars",
+      ],
+      protocolTimeout: 300_000, // Optional: Increase the protocol timeout if needed
+    });
+  }
 
-        browser = await launch({
-            executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-            headless: false,
-        });
-
-    } else {
-
-        browser = await launch({
-            executablePath: '/usr/bin/chromium-browser',
-            // executablePath: '/usr/bin/chromium',
-            // executablePath: '/home/testadmin/.cache/puppeteer/chrome-headless-shell/linux-128.0.6613.119/chrome-headless-shell-linux64/chrome-headless-shell',
-            args: [
-                // '--headless=old',
-                '--headless',
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--disable-infobars',
-            ],
-            protocolTimeout: 300_000, // Optional: Increase the protocol timeout if needed
-        });
-
-    }
-
-    return browser;
+  return browser;
 };
 
 const getScheduleRateStrings = async ({
-    url,
-    username,
-    password,
-    useTomorrowRate
+  url,
+  username,
+  password,
+  useTomorrowRate,
 }) => {
+  console.log(`${getDaylightTimeString()} getScheduleRateStrings start`);
 
-    console.log(`${getDaylightTimeString()} getScheduleRateStrings start`);
+  let priceRowsStrings = [];
 
-    let priceRowsStrings = [];
+  const browser = await getBrowser();
+  // create a browser page
+  const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(300_000); // set timeout to 5 mins
 
-    const browser = await getBrowser();
-    // create a browser page
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(300_000); // set timeout to 5 mins
+  try {
+    console.log(
+      `${getDaylightTimeString()} getScheduleRateStrings url = ${url}`
+    );
+    await page.goto(url, { timeout: 300_000 });
 
-    try {
+    await submitLogin(page, username, password);
 
-        console.log(`${getDaylightTimeString()} getScheduleRateStrings url = ${url}`);
-        await page.goto(url, { timeout: 300_000 });
+    priceRowsStrings = await getRateTable(page, useTomorrowRate);
+    // console.log('priceRowsStrings');
+    // console.log(priceRowsStrings);
 
-        await submitLogin(page, username, password);
+    await submitLogout(page);
+  } catch (err) {
+    // Log any errors that occur.
+    console.error(err);
+  } finally {
+    // close the browser
+    await browser.close();
+  }
 
-        priceRowsStrings = await getRateTable(page, useTomorrowRate);
-        // console.log('priceRowsStrings');
-        // console.log(priceRowsStrings);
+  console.log(`${getDaylightTimeString()} getScheduleRateStrings end`);
 
-        await submitLogout(page);
-
-    } catch (err) {
-        // Log any errors that occur.
-        console.error(err);
-    } finally {
-        // close the browser
-        await browser.close();
-    }
-
-    console.log(`${getDaylightTimeString()} getScheduleRateStrings end`);
-
-    return priceRowsStrings;
+  return priceRowsStrings;
 };
 
 const getScheduleRates = async (useTomorrowRate) => {
-    const priceRowsStrings = await getScheduleRateStrings({
-        url: 'https://octopus.energy/login',
-        username: process.env.SECRET_USERNAME,
-        password: process.env.SECRET_PASSWORD,
-        useTomorrowRate: useTomorrowRate
-    });
-    return priceRowsStrings
+  const priceRowsStrings = await getScheduleRateStrings({
+    url: "https://octopus.energy/login",
+    username: process.env.SECRET_USERNAME,
+    password: process.env.SECRET_PASSWORD,
+    useTomorrowRate: useTomorrowRate,
+  });
+  return priceRowsStrings;
 };
 
 export { getScheduleRates };

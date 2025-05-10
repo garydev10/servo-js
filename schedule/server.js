@@ -1,19 +1,18 @@
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { config } from "dotenv";
 
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { config } from 'dotenv';
-
-import { getDaylightTimeString } from './services/common.js';
-import { getScheduleRates } from './services/webpage.js';
-import { processScheduleRates } from './services/scheduleRate.js';
+import { getDaylightTimeString } from "./services/common.js";
+import { getScheduleRates } from "./services/webpage.js";
+import { processScheduleRates } from "./services/scheduleRate.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dotEnvPath = resolve(__dirname, './', '.env');
+const dotEnvPath = resolve(__dirname, "./", ".env");
 config({ path: dotEnvPath });
 
-let url = 'http://localhost:5000';
+let url = "http://localhost:5000";
 
-const isWin = process.platform === 'win32';
+const isWin = process.platform === "win32";
 // for test in windows pc
 if (isWin) {
   url = `http://${process.env.SECRET_SERVER_IP}:5000`;
@@ -48,14 +47,14 @@ const getUpdatedRates = async () => {
 const updateScheduleRates = async (scheduleRateStrings, useTomorrowRate) => {
   // update server rate table
   const res = await fetch(`${url}/api/schedule-rates`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-type': 'application/json; charset=UTF-8',
+      "Content-type": "application/json; charset=UTF-8",
     },
     body: JSON.stringify({
       date: getDaylightDateString(useTomorrowRate),
-      scheduleRates: scheduleRateStrings
-    })
+      scheduleRates: scheduleRateStrings,
+    }),
   });
   const data = await res.json();
   return data;
@@ -73,17 +72,19 @@ const getDaylightDateString = (useTomorrowRate) => {
 };
 
 const runScheduleRates = async (useTomorrowRate) => {
-  console.log(`${getDaylightTimeString()} runScheduleRates useTomorrowRate = ${useTomorrowRate}`);
+  console.log(
+    `${getDaylightTimeString()} runScheduleRates useTomorrowRate = ${useTomorrowRate}`
+  );
   const priceRowsStrings = await getScheduleRates(useTomorrowRate);
-  console.log('priceRowsStrings');
+  console.log("priceRowsStrings");
   console.log(priceRowsStrings);
 
   let scheduleRateStrings = priceRowsStrings.map(([time, rate]) => ({
-    time: time.split('\n')[1].substring(0, 5),
-    rate: rate.split('\n')[1].replace('p/kWh', '')
+    time: time.split("\n")[1].substring(0, 5),
+    rate: rate.split("\n")[1].replace("p/kWh", ""),
   }));
   scheduleRateStrings = processScheduleRates(scheduleRateStrings);
-  console.log('scheduleRateStrings');
+  console.log("scheduleRateStrings");
   console.log(scheduleRateStrings);
 
   if (scheduleRateStrings && scheduleRateStrings.length > 0) {
@@ -94,31 +95,33 @@ const runScheduleRates = async (useTomorrowRate) => {
 };
 
 const runServoWebCam = async () => {
-  // run servo webcam will cause under voltage and schedule immediately stop and return, 
+  // run servo webcam will cause under voltage and schedule immediately stop and return,
   // so we cannot switch boiler for 2 times or run schedule after switch
   await runServo();
   return await runWebCam();
-}
+};
 
 const getHHM = (hhmm) => {
   return hhmm.substring(0, 4);
-}
+};
 
 const runSchedule = async () => {
   const args = process.argv.slice(2);
   const args0 = args[0];
   const hhmm = getHHMM();
-  console.log(`${getDaylightTimeString()} runSchedule hhmm = ${hhmm}, url = ${url}, args0 = ${args0}`);
+  console.log(
+    `${getDaylightTimeString()} runSchedule hhmm = ${hhmm}, url = ${url}, args0 = ${args0}`
+  );
 
   // for test in windows pc
-  if (isWin || args0 === '1' || args0 === '0') {
-    // test 
+  if (isWin || args0 === "1" || args0 === "0") {
+    // test
     let useTomorrowRate = true;
-    if (args0 === '0') {
+    if (args0 === "0") {
       useTomorrowRate = false;
     }
     await runScheduleRates(useTomorrowRate);
-  } else if (getHHM(hhmm) === getHHM('20:00')) {
+  } else if (getHHM(hhmm) === getHHM("20:00")) {
     const useTomorrowRate = true;
     await runScheduleRates(useTomorrowRate);
   } else {
@@ -139,9 +142,11 @@ const runSchedule = async () => {
   for (let i = 0; i < schedules.length; i++) {
     const di = i;
     const schedule = schedules[i];
-    console.log(`Check hhmm ${hhmm} === ${schedule} schedule${di} ?`)
+    console.log(`Check hhmm ${hhmm} === ${schedule} schedule${di} ?`);
     if (getHHM(hhmm) === getHHM(schedule)) {
-      console.log(`Run Schedule with Servo and WebCam as hhmm ${hhmm} === ${schedule} schedule${di}.`);
+      console.log(
+        `Run Schedule with Servo and WebCam as hhmm ${hhmm} === ${schedule} schedule${di}.`
+      );
       await runServoWebCam();
     }
   }
@@ -149,7 +154,7 @@ const runSchedule = async () => {
   return;
 };
 
-// async main function 
+// async main function
 (async () => {
   console.log(`${getDaylightTimeString()} app start...`);
   try {
