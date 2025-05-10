@@ -1,38 +1,24 @@
 "use strict";
-import { readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import bodyParser from "body-parser";
 
 import { getDaylightTimeString } from "../services/common.js";
 import { getWebCamImage } from "../services/webcam.js";
 import { triggerServo } from "../services/servo.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { isMissing } from "../services/common.js";
+import {
+  getSchedulesOptions,
+  getSchedulesHHMM,
+  writeSchedulesHHMM,
+} from "../services/schedules.js";
+import {
+  getScheduleTable,
+  updateScheduleTable,
+} from "../services/rateTable.js";
 
 export function apiRoutes(app) {
   // Use body-parser to Parse POST Requests
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-
-  const schedulesOptionsFilePath = resolve(
-    __dirname,
-    "../data",
-    "schedulesOptions.txt"
-  );
-  const getSchedulesOptions = () =>
-    readFileSync(schedulesOptionsFilePath, "utf-8")
-      .toString()
-      .split("\n")
-      .map((l) => l.trim());
-  const schedulesFilePath = resolve(__dirname, "../data", "schedules.txt");
-  const getSchedulesHHMM = () =>
-    readFileSync(schedulesFilePath, "utf-8")
-      .toString()
-      .split("\n")
-      .map((l) => l.trim());
-
-  const isMissing = (field) => field === undefined || field === "";
 
   app.route("/api/time").get((req, res) => {
     try {
@@ -80,7 +66,7 @@ export function apiRoutes(app) {
           return;
         }
         schedulesHHMM[index] = schedule;
-        writeFileSync(schedulesFilePath, schedulesHHMM.join("\r\n"));
+        writeSchedulesHHMM(schedulesHHMM);
         res.json({ schedule: schedule, index: index });
       } catch (error) {
         console.error(error);
@@ -100,32 +86,14 @@ export function apiRoutes(app) {
     return;
   });
 
-  const scheduleRatesFilePath = resolve(
-    __dirname,
-    "../data",
-    "scheduleRates.json"
-  );
-  const getScheduleTable = () => {
-    const jsonString = readFileSync(scheduleRatesFilePath, "utf-8");
-    const scheduleTable = JSON.parse(jsonString);
-    return scheduleTable;
-  };
-  const updateScheduleTable = (date, scheduleRates) => {
-    const jsonString = JSON.stringify({ date, scheduleRates });
-    writeFileSync(scheduleRatesFilePath, jsonString);
-  };
   app
     .route("/api/schedule-rates")
     .get((req, res) => {
       try {
-        const jsonString = readFileSync(scheduleRatesFilePath, "utf-8");
-        if (isMissing(jsonString)) {
-          res.json({ message: "schedule rates format error" });
-          return;
-        }
         const scheduleTable = getScheduleTable();
         res.json(scheduleTable);
       } catch (error) {
+        res.json({ message: "schedule rates format error" });
         console.error(error);
       }
 

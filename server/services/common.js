@@ -7,4 +7,6 @@ const getDaylightTimeString = () => {
   return ds;
 };
 
-export { getDaylightTimeString };
+const isMissing = (field) => field === undefined || field === "";
+
+export { getDaylightTimeString, isMissing };
