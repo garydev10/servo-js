@@ -15,7 +15,7 @@
   text-align: left;
 }
 
-input[type='text'] {
+input[type="text"] {
   width: 100px;
 }
 
@@ -44,9 +44,9 @@ input[type='text'] {
 
 @keyframes spin {
   from {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
