@@ -9,8 +9,11 @@ import { apiRoutes } from "./routes/api.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-app.route("/").get(function (req, res) {
-  res.sendFile(__dirname + "/views/index.html");
+
+app.set('views', __dirname + "/views");
+app.set("view engine", "ejs");
+app.get("/", function (req, res) {
+  res.render("index");
 });
 
 app.use("/public", express.static(__dirname + "/public"));
