@@ -23,88 +23,20 @@
 
         <div id="schedulesForms">
           <% schedules.forEach((schedule, i)=> { %>
-          <% const { di, formId, dropdownId, jsonResultId }=uiItems[i]; %>
-          <form id="<%= formId %>" class="row">
-            <label for="<%= dropdownId %>" class="form-label">Schedule <%= di %> Boiler switch at: </label>
-            <div class="col-sm-4">
-              <select name="<%= dropdownId %>" id="<%= dropdownId %>" class="form-select">
-                <% schedulesOptions.forEach((opt)=> { %>
-                <option value="<%= opt %>" <%=(opt===schedule)? "selected" : "" %>>
-                  <%= opt %>
-                </option>
-                <% }); %>
-              </select>
-            </div>
-            <div class="col-sm-4">
-              <button type="submit" class="btn btn-primary">
-                Schedule Set!
-              </button>
-            </div>
-            <code id="<%= jsonResultId %>"></code>
-          </form>
-          <hr />
+          <% const uiItem = uiItems[i]; %>
+          <%- include("partials/schedule", { schedule, i, schedulesOptions, uiItem }) %>
           <% }); %>
         </div>
 
-        <form id="boilerForm" class="row">
-          <div class="col-sm-4">
-            <label class="form-label">Boiler Button: </label>
-          </div>
-          <div class="col-sm-4">
-            <button type="submit" class="btn btn-primary">
-              Boiler Press!
-            </button>
-          </div>
-          <code id="boilerJsonResult"></code>
-        </form>
-        <hr />
+        <%- include('partials/boiler'); %>
 
-        <form id="webCamForm" class="row">
-          <div class="col-sm-4">
-            <label class="form-label">Web Cam Image: </label>
-            <a href="/public/images" class="link-primary">View Images</a>
-          </div>
-          <div class="col-sm-4">
-            <button type="submit" class="btn btn-primary">Image Get!</button>
-          </div>
-          <div class="col-sm-4"></div>
-          <div id="webCamJsonResult"></div>
-          <div id="loading"></div>
-        </form>
-        <hr />
+        <%- include('partials/webcam'); %>
 
         <div id="serverTime" class="row">
           <h5>Server Time: <%= serverTime %></h5>
         </div>
 
-        <div id="scheduleRates" class="row">
-          <h5>Schedule Rates: <%= scheduleTable.date %></h5>
-          <% const tableId = "feeTable"; %>
-          <table class="table table-striped" id="<%= tableId %>">
-            <thead>
-              <tr class="table-info">
-                <% const cols=Object.keys(scheduleTable.scheduleRates[0]); %>
-                <% cols.forEach((col, index)=> { %>
-                <th scope="col">
-                  <a class="text-dark" sort-dir="asc" onclick=<%=`sortTable(${index},'${tableId}')` %>><%= col %>
-                  </a>
-                </th>
-                <% }); %>
-              </tr>
-            </thead>
-            <tbody>
-              <% scheduleTable.scheduleRates.forEach((rows)=> { %>
-              <tr>
-                <% cols.forEach((col)=> { %>
-                <td>
-                  <%= rows[col]%>
-                </td>
-                <% }); %>
-              </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        </div>
+        <%- include("partials/rateTable", scheduleTable) %>
 
       </div>
     </div>

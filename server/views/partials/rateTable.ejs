@@ -1,0 +1,28 @@
+<div id="scheduleRates" class="row">
+  <h5>Schedule Rates: <%= scheduleTable.date %></h5>
+  <% const tableId = "feeTable"; %>
+  <table class="table table-striped" id="<%= tableId %>">
+    <thead>
+      <tr class="table-info">
+        <% const cols=Object.keys(scheduleTable.scheduleRates[0]); %>
+        <% cols.forEach((col, index)=> { %>
+        <th scope="col">
+          <a class="text-dark" sort-dir="asc" onclick=<%=`sortTable(${index},'${tableId}')` %>><%= col %>
+          </a>
+        </th>
+        <% }); %>
+      </tr>
+    </thead>
+    <tbody>
+      <% scheduleTable.scheduleRates.forEach((rows)=> { %>
+      <tr>
+        <% cols.forEach((col)=> { %>
+        <td>
+          <%= rows[col]%>
+        </td>
+        <% }); %>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
