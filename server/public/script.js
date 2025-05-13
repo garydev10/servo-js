@@ -39,22 +39,18 @@ function addEventWebCam() {
   });
 }
 
-function addEventBoiler() {
-  const boilerForm = document.getElementById("boilerForm");
-  boilerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/servo");
-      if (!res.ok) {
-        throw new Error(`Response status: ${res.status}`);
-      }
-      const data = await res.json();
-      const html = JSON.stringify(data);
-      document.getElementById("boilerJsonResult").innerText = html;
-    } catch (error) {
-      console.error(error.message);
+async function handlePressBoiler(jsonResultId) {
+  try {
+    const res = await fetch("/api/servo");
+    if (!res.ok) {
+      throw new Error(`Response status: ${res.status}`);
     }
-  });
+    const data = await res.json();
+    const html = JSON.stringify(data);
+    document.getElementById(jsonResultId).innerText = html;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 async function handleSubmitSchedule(i, dropdownId, jsonResultId) {
@@ -114,5 +110,4 @@ function sortTable(columnIndex, tableId) {
 document.addEventListener("DOMContentLoaded", async () => {
   // main action after document load
   addEventWebCam();
-  addEventBoiler();
 });
