@@ -17,26 +17,22 @@ function hideLoading() {
   loader.classList.remove("display");
 }
 
-function addEventWebCam() {
-  const webCamForm = document.getElementById("webCamForm");
-  webCamForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const jsonResult = document.getElementById("webCamJsonResult");
-    jsonResult.innerHTML = "";
-    displayLoading();
-    try {
-      const res = await fetch("/api/webcam");
-      if (!res.ok) {
-        throw new Error(`Response status: ${res.status}`);
-      }
-      const data = await res.text();
-      const html = data.replace("<img", '<img class="img-fluid mt-2"');
-      jsonResult.innerHTML = html;
-    } catch (error) {
-      console.error(error.message);
+async function handleImageWebCam(jsonResultId) {
+  const jsonResult = document.getElementById(jsonResultId);
+  jsonResult.innerHTML = "";
+  displayLoading();
+  try {
+    const res = await fetch("/api/webcam");
+    if (!res.ok) {
+      throw new Error(`Response status: ${res.status}`);
     }
-    hideLoading();
-  });
+    const data = await res.text();
+    const html = data.replace("<img", '<img class="img-fluid mt-2"');
+    jsonResult.innerHTML = html;
+  } catch (error) {
+    console.error(error.message);
+  }
+  hideLoading();
 }
 
 async function handlePressBoiler(jsonResultId) {
@@ -106,8 +102,3 @@ function sortTable(columnIndex, tableId) {
     table.querySelector("tbody").appendChild(row);
   });
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-  // main action after document load
-  addEventWebCam();
-});
