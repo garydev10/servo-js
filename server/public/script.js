@@ -111,30 +111,6 @@ function sortTable(columnIndex, tableId) {
   });
 }
 
-async function updateScheduleTable() {
-  try {
-    const res = await fetch("/api/schedule-rates");
-    if (!res.ok) {
-      throw new Error(`Response status: ${res.status}`);
-    }
-    const data = await res.json();
-    let dateRatesHtml = "";
-    if (data.date) {
-      const date = data.date;
-      dateRatesHtml = `<h5>Schedule Rates: ${date}</h5>`;
-    }
-    if (data.scheduleRates) {
-      const scheduleRates = data.scheduleRates;
-      const scheduleRatesHtml = json2Table(scheduleRates);
-      dateRatesHtml = `${dateRatesHtml}${scheduleRatesHtml}`;
-    }
-    const scheduleRatesTable = document.getElementById("scheduleRates");
-    scheduleRatesTable.innerHTML = `${dateRatesHtml}`;
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
 document.addEventListener("DOMContentLoaded", async () => {
   // main action after document load
   addEventWebCam();
