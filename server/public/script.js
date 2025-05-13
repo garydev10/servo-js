@@ -57,62 +57,26 @@ function addEventBoiler() {
   });
 }
 
-function addEventSchedules(i, formId, dropdownId, jsonResultId) {
-  const form = document.getElementById(formId);
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const dropdown = document.getElementById(dropdownId);
-      const schedule = dropdown.value;
-      const res = await fetch("/api/schedules", {
-        method: "post",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-        body: JSON.stringify({
-          schedule: schedule,
-          index: i,
-        }),
-      });
-      if (!res.ok) {
-        throw new Error(`Response status: ${res.status}`);
-      }
-      const data = await res.json();
-      const jsonResult = document.getElementById(jsonResultId);
-      jsonResult.innerText = JSON.stringify(data);
-    } catch (error) {
-      console.error(error.message);
-    }
-  });
-}
-
-async function loadSchedules() {
+async function handleSubmitSchedule(i, dropdownId, jsonResultId) {
   try {
-    let res = await fetch("/api/schedules");
-    let data = await res.json();
-    const schedules = data.schedules;
-    if (!schedules) return;
-
-    res = await fetch("/api/schedules-options");
+    const dropdown = document.getElementById(dropdownId);
+    const schedule = dropdown.value;
+    const res = await fetch("/api/schedules", {
+      method: "post",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        schedule: schedule,
+        index: i,
+      }),
+    });
     if (!res.ok) {
       throw new Error(`Response status: ${res.status}`);
     }
-    data = await res.json();
-    const schedulesOptions = data.schedulesOptions;
-    if (!schedulesOptions) return;
-
-    let uiItems = schedules.map((schedule, i) => {
-      const di = i; // display id
-      const formId = `schedule${di}Form`;
-      const dropdownId = `schedule${di}`;
-      const jsonResultId = `schedule${di}JsonResult`;
-      return { di, formId, dropdownId, jsonResultId };
-    });
-
-    uiItems.forEach((uiItem, i) => {
-      const { formId, dropdownId, jsonResultId } = uiItem;
-      addEventSchedules(i, formId, dropdownId, jsonResultId);
-    });
+    const data = await res.json();
+    const jsonResult = document.getElementById(jsonResultId);
+    jsonResult.innerText = JSON.stringify(data);
   } catch (error) {
     console.error(error.message);
   }
@@ -175,5 +139,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   // main action after document load
   addEventWebCam();
   addEventBoiler();
-  await loadSchedules();
 });

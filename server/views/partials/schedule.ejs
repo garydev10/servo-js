@@ -1,6 +1,6 @@
-<% const { di, formId, dropdownId, jsonResultId } = uiItem; %>
+<% const { formId, dropdownId, jsonResultId } = uiItem; %>
 <form id="<%= formId %>" class="row">
-  <label for="<%= dropdownId %>" class="form-label">Schedule <%= di %> Boiler switch at: </label>
+  <label for="<%= dropdownId %>" class="form-label">Schedule <%= i %> Boiler switch at: </label>
   <div class="col-sm-4">
     <select name="<%= dropdownId %>" id="<%= dropdownId %>" class="form-select">
       <% schedulesOptions.forEach((opt)=> { %>
@@ -11,7 +11,7 @@
     </select>
   </div>
   <div class="col-sm-4">
-    <button type="submit" class="btn btn-primary">
+    <button type="button" class="btn btn-primary" onclick=<%=`handleSubmitSchedule(${i},'${dropdownId}','${jsonResultId}')` %>>
       Schedule Set!
     </button>
   </div>
