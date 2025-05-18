@@ -114,22 +114,27 @@ const runSchedule = async () => {
   );
 
   // for test in windows pc
+  let useTomorrowRate = true;
   if (isWin || args0 === "1" || args0 === "0") {
     // test
-    let useTomorrowRate = true;
     if (args0 === "0") {
       useTomorrowRate = false;
     }
     await runScheduleRates(useTomorrowRate);
   } else if (getHHM(hhmm) === getHHM("20:00")) {
-    const useTomorrowRate = true;
-    await runScheduleRates(useTomorrowRate);
-  } else {
     // get rate again if 20:00 update failed to get data
-    const data = await getUpdatedRates();
-    if (data.scheduleRates && data.scheduleRates.length === 0) {
-      const useTomorrowRate = true;
-      await runScheduleRates(useTomorrowRate);
+    let isRetry = true;
+    let retryRemain = 3;
+    while (isRetry && --retryRemain > 0) {
+      try {
+        await runScheduleRates(useTomorrowRate);
+        const data = await getUpdatedRates();
+        if (data.scheduleRates && data.scheduleRates.length > 0) {
+          isRetry = false;
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
