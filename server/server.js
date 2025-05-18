@@ -18,24 +18,32 @@ apiRoutes(app);
 
 app.use("/public", express.static(__dirname + "/public"));
 
-const schedulesOptions = getSchedulesOptions();
-const schedules = getSchedulesHHMM();
-let uiItems = schedules.map((schedule, i) => {
-  const di = i; // display id
-  const formId = `schedule${di}Form`;
-  const dropdownId = `schedule${di}`;
-  const jsonResultId = `schedule${di}JsonResult`;
-  return { di, formId, dropdownId, jsonResultId };
-});
-
-const serverTime = getDaylightTimeString().replace("T", ", ").replace("Z", "");
-
-const scheduleTable = getScheduleTable();
-
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
 app.get("/", function (req, res) {
-  res.render("index", { schedulesOptions, schedules, uiItems, serverTime, scheduleTable });
+  const schedulesOptions = getSchedulesOptions();
+
+  const schedules = getSchedulesHHMM();
+  let uiItems = schedules.map((schedule, i) => {
+    const formId = `schedule${i}Form`;
+    const dropdownId = `schedule${i}`;
+    const jsonResultId = `schedule${i}JsonResult`;
+    return { formId, dropdownId, jsonResultId };
+  });
+
+  const serverTime = getDaylightTimeString()
+    .replace("T", ", ")
+    .replace("Z", "");
+
+  const scheduleTable = getScheduleTable();
+
+  res.render("index", {
+    schedulesOptions,
+    schedules,
+    uiItems,
+    serverTime,
+    scheduleTable,
+  });
 });
 
 // enable image web listing
