@@ -163,7 +163,7 @@ const runSchedule = async () => {
   );
   if (isDown) {
     console.log(`${getDaylightTimeString()} rebootSystem`);
-    await rebootSystem();
+    // await rebootSystem();
   }
 
   return;
