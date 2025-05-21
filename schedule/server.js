@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { getDaylightTimeString } from "./services/common.js";
 import { getScheduleRates } from "./services/webpage.js";
 import { processScheduleRates } from "./services/scheduleRate.js";
+import { getNetworkStatus, rebootSystem } from "./services/system.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dotEnvPath = resolve(__dirname, "./", ".env");
@@ -154,6 +155,15 @@ const runSchedule = async () => {
       );
       await runServoWebCam();
     }
+  }
+
+  const { isDown, gatewayIp } = await getNetworkStatus();
+  console.log(
+    `${getDaylightTimeString()} getNetworkStatus {isDown, gatewayIp} = {${isDown}, ${gatewayIp}}`
+  );
+  if (isDown) {
+    console.log(`${getDaylightTimeString()} rebootSystem`);
+    await rebootSystem();
   }
 
   return;
