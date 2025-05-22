@@ -9,7 +9,7 @@ import {
   getNetworkStatus,
   turnOffWifi,
   turnOnWifi,
-} from "./services/system.js";
+} from "./services/network.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dotEnvPath = resolve(__dirname, "./", ".env");
