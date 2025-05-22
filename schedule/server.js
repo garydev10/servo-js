@@ -5,7 +5,11 @@ import { config } from "dotenv";
 import { getDaylightTimeString } from "./services/common.js";
 import { getScheduleRates } from "./services/webpage.js";
 import { processScheduleRates } from "./services/scheduleRate.js";
-import { getNetworkStatus, rebootSystem } from "./services/system.js";
+import {
+  getNetworkStatus,
+  turnOffWifi,
+  turnOnWifi,
+} from "./services/system.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dotEnvPath = resolve(__dirname, "./", ".env");
@@ -102,6 +106,20 @@ const runServoWebCam = async () => {
   return await runWebCam();
 };
 
+const checkRestartNetwork = async () => {
+  const { isDown, gatewayIp } = await getNetworkStatus();
+  console.log(
+    `${getDaylightTimeString()} getNetworkStatus {isDown, gatewayIp} = {${isDown}, ${gatewayIp}}`
+  );
+  if (isDown) {
+    console.log(`${getDaylightTimeString()} turnOffWifi`);
+    await turnOffWifi();
+    await new Promise((r) => setTimeout(r, 30_000));
+    console.log(`${getDaylightTimeString()} turnOnWifi`);
+    await turnOnWifi();
+  }
+};
+
 const getHHM = (hhmm) => {
   return hhmm.substring(0, 4);
 };
@@ -113,6 +131,8 @@ const runSchedule = async () => {
   console.log(
     `${getDaylightTimeString()} runSchedule hhmm = ${hhmm}, url = ${url}, args0 = ${args0}`
   );
+
+  await checkRestartNetwork();
 
   // for test in windows pc
   let useTomorrowRate = true;
@@ -155,15 +175,6 @@ const runSchedule = async () => {
       );
       await runServoWebCam();
     }
-  }
-
-  const { isDown, gatewayIp } = await getNetworkStatus();
-  console.log(
-    `${getDaylightTimeString()} getNetworkStatus {isDown, gatewayIp} = {${isDown}, ${gatewayIp}}`
-  );
-  if (isDown) {
-    console.log(`${getDaylightTimeString()} rebootSystem`);
-    // await rebootSystem();
   }
 
   return;

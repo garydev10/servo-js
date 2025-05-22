@@ -6,9 +6,16 @@ import { exec } from "node:child_process";
 const execAsync = promisify(exec);
 const platform = process.platform;
 
-const rebootSystem = async () => {
+const turnOffWifi = async () => {
   if (platform !== "linux") return;
-  const { stdout, stderr } = await execAsync("reboot");
+  const { stdout, stderr } = await execAsync("nmcli radio wifi off");
+  console.log(`stdout: ${stdout}`);
+  console.error(`stderr: ${stderr}`);
+};
+
+const turnOnWifi = async () => {
+  if (platform !== "linux") return;
+  const { stdout, stderr } = await execAsync("nmcli radio wifi on");
   console.log(`stdout: ${stdout}`);
   console.error(`stderr: ${stderr}`);
 };
@@ -29,4 +36,4 @@ const getNetworkStatus = async () => {
   return { isDown, gatewayIp };
 };
 
-export { getNetworkStatus, rebootSystem };
+export { getNetworkStatus, turnOffWifi, turnOnWifi };
