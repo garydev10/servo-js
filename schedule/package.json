@@ -5,8 +5,9 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "node server.js 1",
+    "dev": "node server.js",
     "dev0": "node server.js 0",
+    "dev1": "node server.js 1",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Gary L",

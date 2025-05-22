@@ -17,9 +17,9 @@ config({ path: dotEnvPath });
 
 let url = "http://localhost:5000";
 
-const isWin = process.platform === "win32";
+const platform = process.platform;
 // for test in windows pc
-if (isWin) {
+if (platform === "win32") {
   url = `http://${process.env.SECRET_SERVER_IP}:5000`;
 }
 
@@ -136,7 +136,7 @@ const runSchedule = async () => {
 
   // for test in windows pc
   let useTomorrowRate = true;
-  if (isWin || args0 === "1" || args0 === "0") {
+  if (args0 === "1" || args0 === "0") {
     // test
     if (args0 === "0") {
       useTomorrowRate = false;
