@@ -9,6 +9,7 @@ import {
   getNetworkStatus,
   turnOffWifi,
   turnOnWifi,
+  connectNetwork,
 } from "./services/network.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -117,6 +118,8 @@ const checkRestartNetwork = async () => {
     await new Promise((r) => setTimeout(r, 30_000));
     console.log(`${getDaylightTimeString()} turnOnWifi`);
     await turnOnWifi();
+    console.log(`${getDaylightTimeString()} connectNetwork`);
+    await connectNetwork();
   }
 };
 

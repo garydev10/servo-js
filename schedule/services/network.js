@@ -2,6 +2,7 @@
 
 import { promisify } from "node:util";
 import { exec } from "node:child_process";
+import { getDaylightTimeString } from "./common.js";
 
 const execAsync = promisify(exec);
 const platform = process.platform;
@@ -16,6 +17,15 @@ const turnOffWifi = async () => {
 const turnOnWifi = async () => {
   if (platform !== "linux") return;
   const { stdout, stderr } = await execAsync("nmcli radio wifi on");
+  console.log(`stdout: ${stdout}`);
+  console.error(`stderr: ${stderr}`);
+};
+
+const connectNetwork = async () => {
+  if (platform !== "linux") return;
+  const { stdout, stderr } = await execAsync(
+    "nmcli connection up preconfigured"
+  );
   console.log(`stdout: ${stdout}`);
   console.error(`stderr: ${stderr}`);
 };
@@ -36,4 +46,4 @@ const getNetworkStatus = async () => {
   return { isDown, gatewayIp };
 };
 
-export { getNetworkStatus, turnOffWifi, turnOnWifi };
+export { getNetworkStatus, turnOffWifi, turnOnWifi, connectNetwork };
