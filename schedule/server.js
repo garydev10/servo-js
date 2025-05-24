@@ -148,12 +148,11 @@ const runSchedule = async () => {
   const schedules = data.schedules;
 
   for (let i = 0; i < schedules.length; i++) {
-    const di = i;
     const schedule = schedules[i];
-    console.log(`Check hhmm ${hhmm} === ${schedule} schedule${di} ?`);
+    console.log(`Check hhmm ${hhmm} === ${schedule} schedule${i} ?`);
     if (getHHM(hhmm) === getHHM(schedule)) {
       console.log(
-        `Run Schedule with Servo and WebCam as hhmm ${hhmm} === ${schedule} schedule${di}.`
+        `Run Schedule with Servo and WebCam as hhmm ${hhmm} === ${schedule} schedule${i}.`
       );
       await runServoWebCam();
     }
