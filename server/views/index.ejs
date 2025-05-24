@@ -21,6 +21,11 @@
     <div class="mb-3">
       <div id="testui">
 
+        <div id="serverTime" class="row">
+          <p><b>Server Time: <%= serverTime %></b></p>
+          <hr />
+        </div>
+
         <div id="schedulesForms">
           <% schedules.forEach((schedule, i)=> { %>
           <% const uiItem = uiItems[i]; %>
@@ -31,10 +36,6 @@
         <%- include('partials/boiler'); %>
 
         <%- include('partials/webcam'); %>
-
-        <div id="serverTime" class="row">
-          <h5>Server Time: <%= serverTime %></h5>
-        </div>
 
         <%- include("partials/rateTable", scheduleTable) %>
 
