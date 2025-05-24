@@ -5,12 +5,7 @@ import { config } from "dotenv";
 import { getDaylightTimeString } from "./services/common.js";
 import { getScheduleRates } from "./services/webpage.js";
 import { processScheduleRates } from "./services/scheduleRate.js";
-import {
-  getNetworkStatus,
-  turnOffWifi,
-  turnOnWifi,
-  connectNetwork,
-} from "./services/network.js";
+import { checkRestartNetwork } from "./services/network.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dotEnvPath = resolve(__dirname, "./", ".env");
@@ -105,22 +100,6 @@ const runServoWebCam = async () => {
   // so we cannot switch boiler for 2 times or run schedule after switch
   await runServo();
   return await runWebCam();
-};
-
-const checkRestartNetwork = async () => {
-  const { isDown, gatewayIp } = await getNetworkStatus();
-  console.log(
-    `${getDaylightTimeString()} getNetworkStatus {isDown, gatewayIp} = {${isDown}, ${gatewayIp}}`
-  );
-  if (isDown) {
-    console.log(`${getDaylightTimeString()} turnOffWifi`);
-    await turnOffWifi();
-    await new Promise((r) => setTimeout(r, 30_000));
-    console.log(`${getDaylightTimeString()} turnOnWifi`);
-    await turnOnWifi();
-    console.log(`${getDaylightTimeString()} connectNetwork`);
-    await connectNetwork();
-  }
 };
 
 const getHHM = (hhmm) => {

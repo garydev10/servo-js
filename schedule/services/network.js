@@ -46,4 +46,20 @@ const getNetworkStatus = async () => {
   return { isDown, gatewayIp };
 };
 
-export { getNetworkStatus, turnOffWifi, turnOnWifi, connectNetwork };
+const checkRestartNetwork = async () => {
+  const { isDown, gatewayIp } = await getNetworkStatus();
+  console.log(
+    `${getDaylightTimeString()} getNetworkStatus {isDown, gatewayIp} = {${isDown}, ${gatewayIp}}`
+  );
+  if (isDown) {
+    console.log(`${getDaylightTimeString()} turnOffWifi`);
+    await turnOffWifi();
+    await new Promise((r) => setTimeout(r, 30_000));
+    console.log(`${getDaylightTimeString()} turnOnWifi`);
+    await turnOnWifi();
+    console.log(`${getDaylightTimeString()} connectNetwork`);
+    await connectNetwork();
+  }
+};
+
+export { checkRestartNetwork };
