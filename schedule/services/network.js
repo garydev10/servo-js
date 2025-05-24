@@ -57,6 +57,7 @@ const checkRestartNetwork = async () => {
     await new Promise((r) => setTimeout(r, 30_000));
     console.log(`${getDaylightTimeString()} turnOnWifi`);
     await turnOnWifi();
+    await new Promise((r) => setTimeout(r, 30_000));
     console.log(`${getDaylightTimeString()} connectNetwork`);
     await connectNetwork();
   }
