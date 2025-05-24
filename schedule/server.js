@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
 
 import { getDaylightTimeString } from "./services/common.js";
-import { getScheduleRates } from "./services/webpage.js";
+import { getWebRates } from "./services/webpage.js";
 import { processScheduleRates } from "./services/scheduleRate.js";
 import { checkRestartNetwork } from "./services/network.js";
 
@@ -38,11 +38,22 @@ const runServo = async () => {
   return data;
 };
 
-const getUpdatedRates = async () => {
+const getScheduleRates = async () => {
   const res = await fetch(`${url}/api/schedule-rates`);
   const data = await res.json();
   // console.log(data);
   return data;
+};
+
+const getDaylightDateString = (useTomorrowRate) => {
+  const rightNow = new Date();
+  if (useTomorrowRate) {
+    rightNow.setDate(rightNow.getDate() + 1);
+  }
+  rightNow.setMinutes(rightNow.getMinutes() - rightNow.getTimezoneOffset());
+  let ds = rightNow.toISOString();
+  ds = ds.substring(0, 10);
+  return ds;
 };
 
 const updateScheduleRates = async (scheduleRateStrings, useTomorrowRate) => {
@@ -61,30 +72,20 @@ const updateScheduleRates = async (scheduleRateStrings, useTomorrowRate) => {
   return data;
 };
 
-const getDaylightDateString = (useTomorrowRate) => {
-  const rightNow = new Date();
-  if (useTomorrowRate) {
-    rightNow.setDate(rightNow.getDate() + 1);
-  }
-  rightNow.setMinutes(rightNow.getMinutes() - rightNow.getTimezoneOffset());
-  let ds = rightNow.toISOString();
-  ds = ds.substring(0, 10);
-  return ds;
-};
-
 const runScheduleRates = async (useTomorrowRate) => {
   console.log(
     `${getDaylightTimeString()} runScheduleRates useTomorrowRate = ${useTomorrowRate}`
   );
-  const priceRowsStrings = await getScheduleRates(useTomorrowRate);
-  console.log("priceRowsStrings");
-  console.log(priceRowsStrings);
+  const webRateStrings = await getWebRates(useTomorrowRate);
+  console.log("webRateStrings");
+  console.log(webRateStrings);
 
-  let scheduleRateStrings = priceRowsStrings.map(([time, rate]) => ({
+  const scheduleRates = webRateStrings.map(([time, rate]) => ({
     time: time.split("\n")[1].substring(0, 5),
     rate: rate.split("\n")[1].replace("p/kWh", ""),
   }));
-  scheduleRateStrings = processScheduleRates(scheduleRateStrings);
+
+  const scheduleRateStrings = processScheduleRates(scheduleRates);
   console.log("scheduleRateStrings");
   console.log(scheduleRateStrings);
 
@@ -131,7 +132,7 @@ const runSchedule = async () => {
     while (isRetry && --retryRemain > 0) {
       try {
         await runScheduleRates(useTomorrowRate);
-        const data = await getUpdatedRates();
+        const data = await getScheduleRates();
         if (data.scheduleRates && data.scheduleRates.length > 0) {
           isRetry = false;
         }

@@ -101,13 +101,13 @@ const getBrowser = async () => {
   return browser;
 };
 
-const getScheduleRateStrings = async ({
+const getWebRateStrings = async ({
   url,
   username,
   password,
   useTomorrowRate,
 }) => {
-  console.log(`${getDaylightTimeString()} getScheduleRateStrings start`);
+  console.log(`${getDaylightTimeString()} getWebRateStrings start`);
 
   let priceRowsStrings = [];
 
@@ -117,9 +117,7 @@ const getScheduleRateStrings = async ({
   page.setDefaultNavigationTimeout(300_000); // set timeout to 5 mins
 
   try {
-    console.log(
-      `${getDaylightTimeString()} getScheduleRateStrings url = ${url}`
-    );
+    console.log(`${getDaylightTimeString()} getWebRateStrings url = ${url}`);
     await page.goto(url, { timeout: 300_000 });
 
     await submitLogin(page, username, password);
@@ -137,13 +135,13 @@ const getScheduleRateStrings = async ({
     await browser.close();
   }
 
-  console.log(`${getDaylightTimeString()} getScheduleRateStrings end`);
+  console.log(`${getDaylightTimeString()} getWebRateStrings end`);
 
   return priceRowsStrings;
 };
 
-const getScheduleRates = async (useTomorrowRate) => {
-  const priceRowsStrings = await getScheduleRateStrings({
+const getWebRates = async (useTomorrowRate) => {
+  const priceRowsStrings = await getWebRateStrings({
     url: "https://octopus.energy/login",
     username: process.env.SECRET_USERNAME,
     password: process.env.SECRET_PASSWORD,
@@ -152,4 +150,4 @@ const getScheduleRates = async (useTomorrowRate) => {
   return priceRowsStrings;
 };
 
-export { getScheduleRates };
+export { getWebRates };
