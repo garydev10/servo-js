@@ -14,12 +14,12 @@ config({ path: dotEnvPath });
 const submitLogin = async (page, username, password) => {
   console.log(`${getDaylightTimeString()} submitLogin start`);
   // wait for the login form
-  const submit = "#loginForm > div.form-group > button";
+  const submit = "#submit-button";
   await page.waitForSelector(submit, { timeout: 300_000 });
 
   // fill in the login credentials
-  await page.$eval("#id_username", (el, value) => (el.value = value), username);
-  await page.$eval("#id_password", (el, value) => (el.value = value), password);
+  await page.$eval("#id_auth-username", (el, value) => (el.value = value), username);
+  await page.$eval("#id_auth-password", (el, value) => (el.value = value), password);
 
   // click the login button and wait for navigation
   await page.click(submit);
