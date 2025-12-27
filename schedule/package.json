@@ -8,12 +8,19 @@
     "dev": "node server.js",
     "dev0": "node server.js 0",
     "dev1": "node server.js 1",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "transform": {},
+    "testTimeout": 30000
   },
   "author": "Gary L",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
     "puppeteer-core": "^23.4.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
   }
 }
