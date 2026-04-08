@@ -82,8 +82,8 @@ const runScheduleRates = async (useTomorrowRate) => {
   console.log(webRateStrings);
 
   const scheduleRates = webRateStrings.map(([time, rate]) => ({
-    time: time.split("\n")[1].substring(0, 5),
-    rate: rate.split("\n")[1].replace("p/kWh", ""),
+    time: time.substring(0, 5),
+    rate: rate.replace("p/kWh", ""),
   }));
 
   const scheduleRateStrings = processScheduleRates(scheduleRates);
