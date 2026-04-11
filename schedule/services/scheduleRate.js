@@ -12,7 +12,7 @@ const processScheduleRates = (scheduleRates) => {
 
   const getSumRate = (time, rates, i) => {
     const MAX_SUM_RATE = "1000.0";
-    if (i > scheduleRates.map((sr) => sr.time).indexOf("19:00")) {
+    if (i > scheduleRates.map((sr) => sr.time).indexOf("21:00")) {
       return MAX_SUM_RATE;
     }
     let sumRate = 0.0;
@@ -33,7 +33,6 @@ const processScheduleRates = (scheduleRates) => {
     rate,
     sumRate: parseFloat(sumRate),
   }));
-  scheduleRates.sort((a, b) => a.sumRate - b.sumRate);
   scheduleRates = scheduleRates.map(({ time, rate, sumRate }) => ({
     time,
     rate,
