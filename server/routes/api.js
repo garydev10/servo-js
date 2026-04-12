@@ -31,8 +31,7 @@ export function apiRoutes(app) {
     return;
   });
 
-  app
-    .route("/api/schedules")
+  app.route("/api/schedules")
     .get((req, res) => {
       try {
         const schedulesHHMM = getSchedulesHHMM();
@@ -86,8 +85,7 @@ export function apiRoutes(app) {
     return;
   });
 
-  app
-    .route("/api/schedule-rates")
+  app.route("/api/schedule-rates")
     .get((req, res) => {
       try {
         const scheduleTable = getScheduleTable();
